@@ -1,4 +1,3 @@
-import os
 from twilio.rest import Client
 from fastapi import HTTPException
 from app.config import settings
