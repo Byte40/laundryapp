@@ -15,5 +15,19 @@ class Settings(BaseSettings):
         env_file =".env"
 
 
+class TwilioSettings(BaseSettings):
+    TWILIO_ACCOUNT_SID: str
+    TWILIO_AUTH_TOKEN: str
+    TWILIO_PHONE_NUMBER: str
+
+    class Config:
+        env_prefix = "TWILIO_"
+
 
 settings = Settings()
+twilio_settings = TwilioSettings()
+
+def load_settings():
+    settings = Settings()
+    settings.twilio = TwilioSettings()
+    return settings
