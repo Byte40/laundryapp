@@ -57,7 +57,6 @@ def create_payment(
     except stripe.error.StripeError as e:
         # Handle Stripe API errors
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
-
     db.add(new_payment)
     db.commit()
     db.refresh(new_payment)

@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from app import oauth2, schemas
 from app.database import get_db
 from app.models import Customer, Order, OrderDeletionRequest
+from app.sms import send_sms
 
 router = APIRouter(
     prefix="/orders",
@@ -35,6 +36,8 @@ def create_order(
     db.add(new_order)
     db.commit()
     db.refresh(new_order)
+    # Send SMS to the customer
+    send_sms(to=customer.phone_number, body="Your order has been placed successfully!")
     return new_order
 
 # Fetch all orders
@@ -126,7 +129,7 @@ def request_order_deletion(
     
     else:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Only customers can request order deletion")
-
+  
 @router.delete('/{order_id}', status_code=status.HTTP_204_NO_CONTENT)
 def delete_order(
     order_id: int, 
