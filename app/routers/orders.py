@@ -5,14 +5,13 @@ from sqlalchemy.orm import Session
 from app import oauth2, schemas
 from app.database import get_db
 from app.models import Customer, Order, OrderDeletionRequest
-from app.sms import send_sms
+from app.sms import send_sms_verification
 
 router = APIRouter(
     prefix="/orders",
     tags=['orders']
 )
 
-# Creating a new Order
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=schemas.OrderOut)
 def create_order(
     order: schemas.OrderCreate,
@@ -36,9 +35,10 @@ def create_order(
     db.add(new_order)
     db.commit()
     db.refresh(new_order)
-    # Send SMS to the customer
-    send_sms(to=customer.phone_number, body="Your order has been placed successfully!")
+    # Send SMS verification to the customer
+    send_sms_verification(to=customer.phone_number)
     return new_order
+
 
 # Fetch all orders
 @router.get("/", response_model=List[schemas.OrderOut], status_code=status.HTTP_200_OK)

@@ -1,15 +1,20 @@
-from twilio.rest import Client
 from fastapi import HTTPException
-from app.config import settings
+from app.twilio_service import send_verification_code, verify_code
 
-def send_sms(to: str, body: str):
+
+def send_sms_verification(to: str):
     try:
-        client = Client(settings.twilio.account_sid, settings.twilio.auth_token)
-        message = client.messages.create(
-            body=body,
-            from_=settings.twilio.phone_number,
-            to=to
-        )
-        return message
+        status = send_verification_code(to)
+        return status
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+def verify_sms_code(phone_number: str, code: str):
+    try:
+        status = verify_code(phone_number, code)
+        return status
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+

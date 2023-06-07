@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app import models
 from app.routers import customers, auth, laundromat, courier, admins, lockers, payment, orders
 from .database import engine
+from app.config import settings
 #from .routers import post, user, auth, vote
 from .config import settings   
 from .routers import auth
