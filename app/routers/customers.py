@@ -11,12 +11,13 @@ router=APIRouter(
     tags=['customers']
 )
 
+@router.post("/", status_code=status.HTTP_201_CREATED, response_model=schemas.CustomerOut)
+async def create_customer(
+    customer: schemas.CustomerCreate,
+    db: Session = Depends(get_db),
+):
 
-@router.post("/", status_code=status.HTTP_201_CREATED, response_model= schemas.CustomerOut)
-def create_customer(customer: schemas.CustomerCreate, db: Session = Depends(get_db)):
-
-
-      # Check if email already exists
+    # Check if email already exists
     if db.query(models.Customer).filter(models.Customer.email == customer.email).first():
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Email already exists")
 
@@ -24,7 +25,7 @@ def create_customer(customer: schemas.CustomerCreate, db: Session = Depends(get_
     if db.query(models.Customer).filter(models.Customer.phone_number == customer.phone_number).first():
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Phone number already exists")
 
-    #hash the password - customer.password
+    # hash the password - customer.password
     hashed_password = utils.hash(customer.password)
     customer.password = hashed_password
 
@@ -40,6 +41,7 @@ def create_customer(customer: schemas.CustomerCreate, db: Session = Depends(get_
     new_customer_dict.pop("_sa_instance_state", None)
 
     return new_customer_dict
+
 
 
 @router.get("/", status_code=status.HTTP_200_OK, response_model=Union[List[schemas.CustomerOut], schemas.CustomerOut])

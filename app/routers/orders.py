@@ -5,7 +5,6 @@ from sqlalchemy.orm import Session
 from app import oauth2, schemas
 from app.database import get_db
 from app.models import Customer, Order, OrderDeletionRequest
-from app.sms import send_sms_verification
 
 router = APIRouter(
     prefix="/orders",
@@ -35,8 +34,6 @@ def create_order(
     db.add(new_order)
     db.commit()
     db.refresh(new_order)
-    # Send SMS verification to the customer
-    send_sms_verification(to=customer.phone_number)
     return new_order
 
 
